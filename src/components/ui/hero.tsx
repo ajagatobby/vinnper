@@ -96,7 +96,7 @@ export default function HeroSection() {
   return (
     <div
       ref={ref}
-      className="w-full overflow-x-hidden min-h-screen flex flex-col items-center justify-center bg-black rounded-none px-2 sm:px-6 py-12 sm:py-20"
+      className="w-full overflow-x-hidden flex flex-col items-center justify-center rounded-none px-2 sm:px-6 py-12 sm:py-20"
     >
       <Grid
         cellSize={80}
@@ -153,7 +153,7 @@ export default function HeroSection() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-white text-black text-sm font-medium rounded-md hover:bg-zinc-200 transition-all items-center gap-1.5 disabled:opacity-70 disabled:bg-zinc-800 disabled:text-zinc-400 z-10 hidden sm:flex"
+                  className="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-white text-black text-sm font-medium rounded-md hover:bg-white/80 transition-all items-center gap-1.5 disabled:bg-white disabled:text-black z-10 hidden sm:flex"
                 >
                   {isLoading ? (
                     <span className="flex items-center">
@@ -177,11 +177,11 @@ export default function HeroSection() {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         ></path>
                       </svg>
-                      <span>Processing</span>
+                      <span>Searching</span>
                     </span>
                   ) : (
                     <>
-                      <span>Download</span>
+                      <span>Search now</span>
                       <ArrowRight size={12} className="block" />
                     </>
                   )}
@@ -216,11 +216,11 @@ export default function HeroSection() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    <span>Processing</span>
+                    <span>Searching</span>
                   </span>
                 ) : (
                   <>
-                    <span>Download Video</span>
+                    <span>Search</span>
                     <ArrowRight size={16} />
                   </>
                 )}
