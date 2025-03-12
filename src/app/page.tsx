@@ -1,4 +1,5 @@
 import { Twitter } from "@/components";
+import NativeRedirectPermission from "@/components/native-redirect";
 import HeroSection from "@/components/ui/hero";
 import { constructMetadata } from "@/Utilities";
 import { GithubIcon } from "lucide-react";

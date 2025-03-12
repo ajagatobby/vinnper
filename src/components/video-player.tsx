@@ -1,19 +1,31 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { Volume2, VolumeX, Download, X, RefreshCcw } from "lucide-react";
+import { Download, X, RefreshCcw } from "lucide-react";
+import { downloadVideo, downloadYTVideo } from "@/Utilities/download-video";
 
-const VideoPlayer = ({
-  url,
-  onClose,
-}: {
+interface VideoPlayerProps {
   url: string;
+  preparedUrl: string;
   onClose: () => void;
+  videoType: "youtube" | "tiktok" | null;
+  videoId: string | null;
+  videoTitle?: string;
+}
+
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  url,
+  preparedUrl,
+  onClose,
+  videoType: initialVideoType,
+  videoId: initialVideoId,
+  videoTitle,
 }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [videoType, setVideoType] = useState<"youtube" | "tiktok" | null>(null);
-  const [videoId, setVideoId] = useState<string | null>(null);
-  const [muted, setMuted] = useState(false);
+  const [videoType, setVideoType] = useState<"youtube" | "tiktok" | null>(
+    initialVideoType
+  );
+  const [videoId, setVideoId] = useState<string | null>(initialVideoId);
 
   // Ref for the modal content
   const modalContentRef = useRef<HTMLDivElement>(null);
@@ -25,7 +37,15 @@ const VideoPlayer = ({
       return;
     }
 
-    // Extract video type and ID
+    // If videoType and videoId are already provided (from parent), use them
+    if (initialVideoType && initialVideoId) {
+      setVideoType(initialVideoType);
+      setVideoId(initialVideoId);
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise, extract video type and ID
     try {
       if (url.includes("youtube.com") || url.includes("youtu.be")) {
         setVideoType("youtube");
@@ -67,7 +87,7 @@ const VideoPlayer = ({
       setError(err instanceof Error ? err.message : "Invalid URL format");
       setLoading(false);
     }
-  }, [url]);
+  }, [url, initialVideoType, initialVideoId]);
 
   // Handle click outside to close
   useEffect(() => {
@@ -99,9 +119,31 @@ const VideoPlayer = ({
     };
   }, [onClose]);
 
-  const handleDownload = () => {
-    // Implement actual download logic here
-    alert(`Starting download for ${videoType} video: ${videoId}`);
+  const handleDownload = async () => {
+    if (!preparedUrl) {
+      setError("Download URL not available");
+      return;
+    }
+
+    // Create filename based on video type and ID
+    let filename = "";
+    if (videoType === "youtube" && videoTitle) {
+      // Use video title for YouTube
+      filename = `${videoTitle.replace(/[^\w\s]/gi, "_")}.mp4`;
+    } else if (videoType === "youtube" && videoId) {
+      filename = `youtube_${videoId}.mp4`;
+    } else if (videoType === "tiktok" && videoId) {
+      filename = `tiktok_${videoId}.mp4`;
+    } else {
+      filename = `video_${Date.now()}.mp4`;
+    }
+
+    // Download the video
+    if (videoType === "youtube") {
+      downloadYTVideo(preparedUrl, filename);
+    } else {
+      downloadVideo(preparedUrl, filename);
+    }
   };
 
   const renderVideoPlayer = () => {
@@ -178,7 +220,11 @@ const VideoPlayer = ({
                 </span>
               )}
               <h3 className="text-white hidden sm:flex text-sm font-medium truncate max-w-md">
-                {videoId ? `Video ID: ${videoId}` : "Loading video..."}
+                {videoTitle
+                  ? videoTitle
+                  : videoId
+                  ? `Video ID: ${videoId}`
+                  : "Loading video..."}
               </h3>
             </div>
 
@@ -186,6 +232,7 @@ const VideoPlayer = ({
               <button
                 onClick={handleDownload}
                 className="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm rounded-md hover:from-blue-700 hover:to-indigo-700 transition-colors flex items-center"
+                disabled={!preparedUrl}
               >
                 <Download size={16} className="mr-2" />
                 Download video
@@ -206,7 +253,6 @@ const VideoPlayer = ({
           </div>
         </div>
 
-        {/* Optional: Small helper text */}
         <div className="text-center mt-4 text-zinc-500 text-sm">
           Click outside or press ESC to close
         </div>

@@ -3,16 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8888 --turbopack",
+    "dev": "next dev -p 3000 --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@number-flow/react": "^0.5.7",
+    "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-slot": "^1.1.2",
+    "axios": "^1.8.3",
+    "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "form-data": "^4.0.2",
     "framer-motion": "^12.5.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.479.0",
@@ -22,7 +26,7 @@
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
-    "ytdl-core": "^4.11.5"
+    "ytdl-core": "npm:@distube/ytdl-core@^4.16.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -3,9 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { Grid } from "./grid";
 import { ArrowRight } from "lucide-react";
 import { Meteors } from "../magicui/meteors";
-import NumberFlow, { continuous, Value } from "@number-flow/react";
+import NumberFlow, { continuous } from "@number-flow/react";
 import { sleep } from "@/Utilities";
 import VideoPlayer from "../video-player";
+import { toast } from "sonner";
+
+import { detectVideoType } from "@/Utilities/download-video";
+import { processVideoUrl } from "@/Utilities/video-processor";
 
 export default function HeroSection() {
   const ref = useRef(null);
@@ -13,26 +17,8 @@ export default function HeroSection() {
   const [submittedUrl, setSubmittedUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
+  const [videoInfo, setVideoInfo] = useState<VideoProcessResponse | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate processing time
-    setTimeout(() => {
-      setIsLoading(false);
-      setSubmittedUrl(videoUrl);
-      setShowVideo(true);
-    }, 1500);
-  };
-
-  const handleReset = () => {
-    setSubmittedUrl("");
-    setShowVideo(false);
-    setVideoUrl("");
-  };
-
-  // Counter states for all three stats
   const [downloadCount, setDownloadCount] = useState(240);
   const [percentageCount, setPercentageCount] = useState(70);
   const [qualityCount, setQualityCount] = useState(50);
@@ -42,7 +28,6 @@ export default function HeroSection() {
   const maxQuality = 4000;
 
   useEffect(() => {
-    // Wait 1 second before starting the counters
     const startCounters = async () => {
       await sleep(1000);
 
@@ -90,10 +75,55 @@ export default function HeroSection() {
     };
   }, []);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!videoUrl.trim()) {
+      toast.error("Please enter a video URL");
+      return;
+    }
+
+    // Detect video type
+    const videoType = detectVideoType(videoUrl.trim());
+    if (!videoType) {
+      toast.error("Unsupported video URL. Please use YouTube or TikTok links.");
+      return;
+    }
+
+    setIsLoading(true);
+    const toastId = toast.loading(`Retrieving ${videoType} video...`);
+
+    try {
+      // Process the video using our service that handles both types
+      const processedVideo = await processVideoUrl(videoUrl.trim());
+
+      setVideoInfo(processedVideo);
+      setSubmittedUrl(videoUrl);
+      setShowVideo(true);
+      toast.success(`Found ${videoType} video!`);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to process video. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+      toast.dismiss(toastId);
+    }
+  };
+
+  const handleReset = () => {
+    setSubmittedUrl("");
+    setShowVideo(false);
+    setVideoUrl("");
+    setVideoInfo(null);
+  };
+
   return (
     <div
       ref={ref}
-      className="w-full overflow-x-hidden min-h-[70vh] flex flex-col items-center justify-center rounded-none px-2 sm:px-6 py-12 sm:py-20"
+      className="w-full overflow-x-hidden sm:min-h-screen min-h-[70vh] flex flex-col items-center justify-center rounded-none px-2 sm:px-6 py-12 sm:py-20"
     >
       <Grid
         cellSize={80}
@@ -141,7 +171,7 @@ export default function HeroSection() {
                   type="text"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="Paste video link here..."
+                  placeholder="Paste TikTok or YouTube link here..."
                   className="w-full py-3 px-4 sm:py-3 rounded-lg bg-zinc-900 border border-zinc-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-zinc-500 relative z-10 text-sm sm:text-base"
                   required
                 />
@@ -269,7 +299,16 @@ export default function HeroSection() {
           </>
         ) : (
           <div className="animate-fade-in py-2 sm:py-4 w-full">
-            <VideoPlayer url={submittedUrl} onClose={handleReset} />
+            <VideoPlayer
+              url={submittedUrl}
+              onClose={handleReset}
+              preparedUrl={videoInfo?.preparedUrl || ""}
+              videoType={videoInfo?.sourceType || null}
+              videoId={videoInfo?.videoId || null}
+              videoTitle={
+                videoInfo?.sourceType === "youtube" ? videoInfo.title || "" : ""
+              }
+            />
           </div>
         )}
       </div>
