@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 import { detectVideoType } from "@/Utilities/download-video";
 import { processVideoUrl } from "@/Utilities/video-processor";
-import { trackDownloads } from "@/lib/action";
+import { totalDownloads } from "@/lib/action";
 
 export default function HeroSection() {
   const ref = useRef(null);
@@ -32,7 +32,7 @@ export default function HeroSection() {
     const startCounters = async () => {
       await sleep(1000);
 
-      const downloads = await trackDownloads();
+      const downloads = await totalDownloads();
       console.log(`Downloads 🟢: ${downloads} `);
 
       // Download counter
