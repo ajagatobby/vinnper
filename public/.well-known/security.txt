@@ -1,0 +1,4 @@
+Contact: mailto:security@vinnper.com
+Expires: 2034-10-21T23:22:00.000Z
+Preferred-Languages: en
+Canonical: https://vinnper.com/.well-known/security.txt
