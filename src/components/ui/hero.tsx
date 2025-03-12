@@ -96,7 +96,7 @@ export default function HeroSection() {
   return (
     <div
       ref={ref}
-      className="w-full overflow-x-hidden flex flex-col items-center justify-center rounded-none px-2 sm:px-6 py-12 sm:py-20"
+      className="w-full overflow-x-hidden min-h-[90vh] flex flex-col items-center justify-center rounded-none px-2 sm:px-6 py-12 sm:py-20"
     >
       <Grid
         cellSize={80}
