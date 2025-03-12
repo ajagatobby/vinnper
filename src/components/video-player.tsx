@@ -36,6 +36,9 @@ const VideoPlayer = ({
           id = url.split("v=")[1]?.split("&")[0] || "";
         } else if (url.includes("youtu.be/")) {
           id = url.split("youtu.be/")[1]?.split("?")[0] || "";
+        } else if (url.includes("youtube.com/shorts/")) {
+          // Handle YouTube Shorts URLs
+          id = url.split("shorts/")[1]?.split("?")[0] || "";
         }
 
         if (!id) {
@@ -129,7 +132,7 @@ const VideoPlayer = ({
     if (videoType === "youtube" && videoId) {
       return (
         <iframe
-          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1`}
+          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&showinfo=0`}
           className="w-full h-full rounded-lg"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
@@ -174,7 +177,7 @@ const VideoPlayer = ({
                   <span className="mr-1">TikTok</span>
                 </span>
               )}
-              <h3 className="text-white text-sm font-medium truncate max-w-md">
+              <h3 className="text-white hidden sm:flex text-sm font-medium truncate max-w-md">
                 {videoId ? `Video ID: ${videoId}` : "Loading video..."}
               </h3>
             </div>
@@ -185,7 +188,7 @@ const VideoPlayer = ({
                 className="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm rounded-md hover:from-blue-700 hover:to-indigo-700 transition-colors flex items-center"
               >
                 <Download size={16} className="mr-2" />
-                Download Video
+                Download video
               </button>
               <button
                 onClick={onClose}

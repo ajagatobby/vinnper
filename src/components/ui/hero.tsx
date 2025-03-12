@@ -1,12 +1,9 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { AnimatedSizeContainer } from "./animated-container-size";
 import { Grid } from "./grid";
-import { ArrowRight, Link2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Meteors } from "../magicui/meteors";
-import { Ripple } from "../magicui/ripple";
 import NumberFlow, { continuous, Value } from "@number-flow/react";
-import { useCycle } from "@/hooks/use-cycle";
 import { sleep } from "@/Utilities";
 import VideoPlayer from "../video-player";
 
@@ -96,7 +93,7 @@ export default function HeroSection() {
   return (
     <div
       ref={ref}
-      className="w-full overflow-x-hidden min-h-[90vh] flex flex-col items-center justify-center rounded-none px-2 sm:px-6 py-12 sm:py-20"
+      className="w-full overflow-x-hidden min-h-[70vh] flex flex-col items-center justify-center rounded-none px-2 sm:px-6 py-12 sm:py-20"
     >
       <Grid
         cellSize={80}
@@ -104,7 +101,6 @@ export default function HeroSection() {
         className="opacity-10 text-white/40 z-1 w-full"
       />
 
-      <Ripple className="z-2 w-full overflow-hidden" />
       <Meteors number={10} className="z-1 hidden sm:block" />
 
       <div className="w-full sm:max-w-md md:max-w-lg lg:max-w-2xl text-center mx-auto z-10 relative space-y-4 sm:space-y-6">

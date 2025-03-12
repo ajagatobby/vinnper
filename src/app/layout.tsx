@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Ripple from "@/components/magicui/ripple";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Ripple className="z-2 w-full overflow-hidden" />
+
         <div className="w-full mx-auto min-h-screen bg-black">{children}</div>
       </body>
     </html>
