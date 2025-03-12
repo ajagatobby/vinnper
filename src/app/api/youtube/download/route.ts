@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 // @ts-ignore
 import ytdl from "ytdl-core";
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,6 +19,8 @@ export async function GET(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    await redis.hset("counts", { url: request.url });
 
     console.log(
       `Starting download: ${title}, format: ${format}, quality: ${quality}`
