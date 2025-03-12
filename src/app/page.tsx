@@ -33,9 +33,11 @@ export default function page() {
   return (
     <div className="relative z-10">
       <div className="w-full justify-between items-center mx-auto flex max-w-lg py-4 sm:px-0 px-10">
-        <h1 className="text-2xl text-white tracking-tighter font-bold">
-          Vinnper
-        </h1>
+        <Link href={"/"}>
+          <h1 className="text-2xl text-white tracking-tighter font-bold select-none cursor-pointer">
+            Vinnper.
+          </h1>
+        </Link>
         <div className="space-x-4 flex items-center">
           <Link href="" passHref>
             <Twitter className="w-5 h-5 relative z-40" color="#fff" />
