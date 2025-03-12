@@ -2,6 +2,7 @@ import { Twitter } from "@/components";
 import HeroSection from "@/components/ui/hero";
 import { constructMetadata } from "@/Utilities";
 import { GithubIcon } from "lucide-react";
+import { Viewport } from "next";
 import Link from "next/link";
 import React from "react";
 
@@ -17,6 +18,15 @@ export function generateMetadata() {
     url: process.env.NEXT_PUBLIC_APP_DOMAIN,
   });
 }
+
+export const viewport: Viewport = {
+  themeColor: "#000",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
 
 export default function page() {
   return (
