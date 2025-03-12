@@ -21,7 +21,7 @@ export function generateMetadata() {
 export default function page() {
   return (
     <div className="relative z-10">
-      <div className="w-full justify-between items-center mx-auto flex max-w-lg py-4">
+      <div className="w-full justify-between items-center mx-auto flex max-w-lg py-4 sm:px-0 px-10">
         <h1 className="text-2xl text-white tracking-tighter font-bold">
           Vinnper
         </h1>
