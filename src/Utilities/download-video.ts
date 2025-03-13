@@ -1,11 +1,23 @@
+// Function to generate a random 8-character alphanumeric string
+function generateRandomFilename(): string {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 export function downloadVideo(url: string, filename?: string): void {
+  const randomFilename = `${generateRandomFilename()}.mp4`;
+
   const a = document.createElement("a");
   a.style.display = "none";
-  a.href = url; // Direct link to the video
-  a.download = filename || getFilenameFromUrl(url); // Set suggested filename
-  a.target = "_blank"; // Open in new tab as fallback
+  a.href = url;
+  a.download = randomFilename;
+  a.target = "_blank";
 
-  // Add to DOM, trigger click, and remove
   document.body.appendChild(a);
   a.click();
 
@@ -14,11 +26,14 @@ export function downloadVideo(url: string, filename?: string): void {
     document.body.removeChild(a);
   }, 100);
 
-  console.log("Download triggered for:", url);
+  console.log("Download triggered for:", url, "with filename:", a.download);
 }
 
 export function downloadYTVideo(url: string, filename?: string): void {
   console.log("Starting download:", url);
+
+  // Generate a random 8-character filename if none is provided
+  const randomFilename = `${generateRandomFilename()}.mp4`;
 
   if (url.startsWith("/api/youtube/download")) {
     window.open(url, "_blank");
@@ -29,7 +44,7 @@ export function downloadYTVideo(url: string, filename?: string): void {
   const a = document.createElement("a");
   a.style.display = "none";
   a.href = url;
-  a.download = filename || getFilenameFromUrl(url);
+  a.download = filename || randomFilename; // Use random filename instead of extracting from URL
 
   // Add to DOM, trigger click, and remove
   document.body.appendChild(a);
@@ -40,50 +55,10 @@ export function downloadYTVideo(url: string, filename?: string): void {
     document.body.removeChild(a);
   }, 100);
 
-  console.log("Download triggered for:", url);
+  console.log("Download triggered for:", url, "with filename:", a.download);
 }
 
-function getFilenameFromUrl(url: string): string {
-  // Try to extract YouTube or TikTok ID for filename
-  try {
-    const urlObj = new URL(url);
-
-    // Check for direct video file extensions
-    if (url.match(/\.(mp4|webm|mov)($|\?)/i)) {
-      const parts = urlObj.pathname.split("/");
-      const filename = parts[parts.length - 1].split("?")[0];
-      return filename;
-    }
-
-    // For TikTok downloads
-    if (url.includes("tiktok")) {
-      const match = url.match(/video\/(\d+)/);
-      if (match && match[1]) {
-        return `tiktok_${match[1]}.mp4`;
-      }
-    }
-
-    // For YouTube downloads
-    if (url.includes("youtube") || url.includes("youtu.be")) {
-      let videoId = "";
-      if (url.includes("v=")) {
-        videoId = url.split("v=")[1]?.split("&")[0] || "";
-      } else if (url.includes("youtu.be/")) {
-        videoId = url.split("youtu.be/")[1]?.split("?")[0] || "";
-      }
-
-      if (videoId) {
-        return `youtube_${videoId}.mp4`;
-      }
-    }
-
-    // Default filename with timestamp
-    return `video_${Date.now()}.mp4`;
-  } catch (e) {
-    // Fallback filename if URL parsing fails
-    return `video_${Date.now()}.mp4`;
-  }
-}
+// This function is kept for backward compatibility but no longer used by the download functions
 
 export function detectVideoType(url: string): "youtube" | "tiktok" | null {
   if (!url) return null;
