@@ -10,7 +10,6 @@ import { toast } from "sonner";
 
 import { detectVideoType } from "@/Utilities/download-video";
 import { processVideoUrl } from "@/Utilities/video-processor";
-import { totalDownloads } from "@/lib/action";
 
 export default function HeroSection() {
   const ref = useRef(null);
@@ -22,18 +21,15 @@ export default function HeroSection() {
 
   const [downloadCount, setDownloadCount] = useState(240);
   const [percentageCount, setPercentageCount] = useState(70);
-  const [qualityCount, setQualityCount] = useState(50);
+  const [qualityCount, setQualityCount] = useState(20);
 
   const maxDownloadCount = 20000;
   const maxPercentage = 100;
-  const maxQuality = 4000;
+  const maxQuality = 100;
 
   useEffect(() => {
     const startCounters = async () => {
       await sleep(1000);
-
-      const downloads = await totalDownloads();
-      console.log(`Downloads 🟢: ${downloads} `);
 
       // Download counter
       const downloadTimer = setInterval(() => {
@@ -291,7 +287,11 @@ export default function HeroSection() {
                 <NumberFlow
                   className="text-xl xs:text-2xl sm:text-3xl font-bold text-white group-hover:text-purple-400 transition-colors"
                   value={qualityCount}
-                  format={{ notation: "standard" }}
+                  format={{
+                    style: "unit",
+                    unit: "percent",
+                    unitDisplay: "narrow",
+                  }}
                   willChange
                   plugins={[continuous]}
                 />
