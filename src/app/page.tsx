@@ -16,7 +16,7 @@ export function generateMetadata() {
   return constructMetadata({
     title,
     description,
-    url: process.env.NEXT_PUBLIC_APP_DOMAIN,
+    url: "https://a6mey415ct.ufs.sh/f/rbcyNovH7ibJdyu4eIfEhRMrfZdwDtCscFOv0KYbP46e8gSk",
   });
 }
 
@@ -39,7 +39,11 @@ export default function page() {
           </h1>
         </Link>
         <div className="space-x-4 flex items-center">
-          <Link href="" passHref>
+          <Link
+            href="https://x.com/ajaga_abdbasit/status/1900002102773977472"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Twitter className="w-5 h-5 relative z-40" color="#fff" />
           </Link>
         </div>

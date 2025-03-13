@@ -24,7 +24,7 @@ export const metadata: Metadata = {
       "Free tool to download YouTube and TikTok videos without watermarks in one click!",
     images: [
       {
-        url: "/banner.png",
+        url: "https://a6mey415ct.ufs.sh/f/rbcyNovH7ibJdyu4eIfEhRMrfZdwDtCscFOv0KYbP46e8gSk",
         width: 1200,
         height: 630,
         alt: "Vinnper - Download videos without watermarks",
@@ -37,8 +37,11 @@ export const metadata: Metadata = {
     title: "Vinnper - Download Videos Without Watermarks",
     description:
       "Free tool to download YouTube and TikTok videos without watermarks in one click!",
-    images: ["/banner.png"],
+    images: [
+      "https://a6mey415ct.ufs.sh/f/rbcyNovH7ibJdyu4eIfEhRMrfZdwDtCscFOv0KYbP46e8gSk",
+    ],
   },
+  viewport: "width=device-width, initial-scale=1",
 };
 
 export default function RootLayout({
