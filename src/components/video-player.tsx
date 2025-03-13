@@ -26,9 +26,35 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     initialVideoType
   );
   const [videoId, setVideoId] = useState<string | null>(initialVideoId);
+  const [resolvingTikTok, setResolvingTikTok] = useState(false);
 
   // Ref for the modal content
   const modalContentRef = useRef<HTMLDivElement>(null);
+
+  // Function to resolve TikTok short URLs
+  const resolveTikTokShortUrl = async (shortUrl: string) => {
+    try {
+      setResolvingTikTok(true);
+      // Call our API endpoint to resolve the TikTok URL
+      const response = await fetch(
+        `/api/resolve-tiktok?url=${encodeURIComponent(shortUrl)}`
+      );
+      const data = await response.json();
+
+      if (data.videoId) {
+        setVideoId(data.videoId);
+        setResolvingTikTok(false);
+        return true;
+      } else {
+        throw new Error("Could not extract TikTok video ID");
+      }
+    } catch (err) {
+      console.error("Error resolving TikTok URL:", err);
+      setError("Could not resolve TikTok video URL");
+      setResolvingTikTok(false);
+      return false;
+    }
+  };
 
   useEffect(() => {
     if (!url) {
@@ -66,28 +92,49 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         }
 
         setVideoId(id);
+        setLoading(false);
       } else if (url.includes("tiktok.com")) {
         setVideoType("tiktok");
 
-        // Extract TikTok video ID
-        const tiktokMatch = url.match(/video\/(\d+)/);
-        if (!tiktokMatch || !tiktokMatch[1]) {
-          throw new Error("Could not extract TikTok video ID");
+        // Handle TikTok URL formats
+        if (url.includes("vm.tiktok.com") || !url.includes("/video/")) {
+          // For short URLs, we need to resolve them first
+          // Set loading to true and will resolve in another effect
+          setResolvingTikTok(true);
+        } else {
+          // Extract TikTok video ID for regular tiktok.com URLs
+          const tiktokMatch = url.match(/video\/(\d+)/);
+          if (!tiktokMatch || !tiktokMatch[1]) {
+            throw new Error("Could not extract TikTok video ID");
+          }
+          setVideoId(tiktokMatch[1]);
+          setLoading(false);
         }
-
-        setVideoId(tiktokMatch[1]);
       } else {
         throw new Error(
           "Unsupported video platform. Please use YouTube or TikTok URLs"
         );
       }
-
-      setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid URL format");
       setLoading(false);
     }
   }, [url, initialVideoType, initialVideoId]);
+
+  // Effect to resolve TikTok short URLs
+  useEffect(() => {
+    if (videoType === "tiktok" && resolvingTikTok) {
+      const resolveUrl = async () => {
+        const success = await resolveTikTokShortUrl(url);
+        if (!success) {
+          setError("Could not resolve TikTok URL");
+        }
+        setLoading(false);
+      };
+
+      resolveUrl();
+    }
+  }, [videoType, resolvingTikTok, url]);
 
   // Handle click outside to close
   useEffect(() => {
@@ -147,10 +194,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   };
 
   const renderVideoPlayer = () => {
-    if (loading) {
+    if (loading || resolvingTikTok) {
       return (
         <div className="flex items-center justify-center w-full h-full bg-zinc-900 rounded-lg">
-          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="flex flex-col items-center">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+            {resolvingTikTok && (
+              <p className="text-zinc-300">Resolving TikTok URL...</p>
+            )}
+          </div>
         </div>
       );
     }

@@ -83,8 +83,11 @@ export default function HeroSection() {
       return;
     }
 
+    // Store the original URL
+    const originalUrl = videoUrl.trim();
+
     // Detect video type
-    const videoType = detectVideoType(videoUrl.trim());
+    const videoType = detectVideoType(originalUrl);
     if (!videoType) {
       toast.error("Unsupported video URL. Please use YouTube or TikTok links.");
       return;
@@ -94,11 +97,42 @@ export default function HeroSection() {
     const toastId = toast.loading(`Retrieving ${videoType} video...`);
 
     try {
-      // Process the video using our service that handles both types
-      const processedVideo = await processVideoUrl(videoUrl.trim());
+      let urlToProcess = originalUrl;
+
+      // For vm.tiktok.com links, resolve them first
+      if (originalUrl.includes("vm.tiktok.com")) {
+        try {
+          const response = await fetch(
+            `/api/tiktok/tiktok-redirect?url=${encodeURIComponent(originalUrl)}`
+          );
+          const data = await response.json();
+
+          if (data && data.finalUrl) {
+            console.log("Resolved TikTok URL:", data.finalUrl);
+            urlToProcess = data.finalUrl;
+            // Update the input field with the resolved URL
+            setVideoUrl(data.finalUrl);
+          } else {
+            console.warn(
+              "Failed to resolve TikTok URL, proceeding with original URL"
+            );
+          }
+        } catch (redirectErr) {
+          console.error("Error resolving short TikTok URL:", redirectErr);
+          // Continue with the original URL if resolution fails
+        }
+      }
+
+      // Now process the video using the potentially resolved URL
+      const processedVideo = await processVideoUrl(urlToProcess);
+
+      if (processedVideo.sourceType === "youtube") {
+        toast.warning("Unable to process YouTube videos or any other video");
+        return;
+      }
 
       setVideoInfo(processedVideo);
-      setSubmittedUrl(videoUrl);
+      setSubmittedUrl(urlToProcess); // Use the URL we processed
       setShowVideo(true);
       toast.success(`Found ${videoType} video!`);
     } catch (error) {
@@ -107,6 +141,7 @@ export default function HeroSection() {
       } else {
         toast.error("Failed to process video. Please try again.");
       }
+      console.error("Video processing error:", error);
     } finally {
       setIsLoading(false);
       toast.dismiss(toastId);
@@ -138,20 +173,21 @@ export default function HeroSection() {
           <>
             <div className="inline-block mb-2 sm:mb-4 animate-fade-in">
               <span className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
-                Deep video research is coming soon 🎉
+                YouTube video downloaded is coming soon 🔥
               </span>
             </div>
 
             <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white animate-fade-in">
-              Download from{" "}
+              Download{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-                TikTok
+                videos
               </span>{" "}
               <span className="sm:hidden">and</span>
-              <span className="hidden sm:inline">and</span>{" "}
+              <span className="hidden sm:inline">from</span>{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-500">
-                YouTube
+                TikTok{" "}
               </span>
+              <span className="hidden sm:inline">for free.</span>
             </h1>
 
             <p className="text-zinc-400 text-base sm:text-lg w-full sm:max-w-md mx-auto animate-fade-in">
@@ -171,10 +207,11 @@ export default function HeroSection() {
                   type="text"
                   value={videoUrl}
                   onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="Paste TikTok or YouTube link here..."
+                  placeholder="Paste TikTok video link"
                   className="w-full py-3 px-4 sm:py-3 rounded-lg bg-zinc-900 border border-zinc-800 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-zinc-500 relative z-10 text-sm sm:text-base"
                   required
                 />
+
                 {/* Desktop button (hidden on mobile) */}
                 <button
                   type="submit"
@@ -213,6 +250,9 @@ export default function HeroSection() {
                   )}
                 </button>
               </div>
+              <p className="text-zinc-400 text-sm pt-2 w-full sm:max-w-md mx-auto animate-fade-in">
+                We only support tiktok videos for now
+              </p>
 
               {/* Mobile button (shown outside the input) */}
               <button
