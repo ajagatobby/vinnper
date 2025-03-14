@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 // @ts-ignore
 import ytdl from "ytdl-core";
 
+export const maxDuration = 300;
+
 export async function POST(request: NextRequest) {
   try {
     const {
