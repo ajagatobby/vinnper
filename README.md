@@ -97,10 +97,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-For questions or support, please reach out to us on [Twitter/X](https://x.com/ajaga_abdbasit).
+For questions or support, please reach out to me on.
+[![Twitter Follow](https://img.shields.io/twitter/follow/ajaga_abdbasit?style=social)](https://x.com/ajaga_abdbasit)
+[![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/@thefatprogrammer)
 
----
-
-<div align="center">
-  <p>Made with ❤️ by Abdbasit Ajaga</p>
-</div>
