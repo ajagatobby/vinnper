@@ -1,8 +1,9 @@
-// app/api/snaptik/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import FormData from "form-data";
+
+export const maxDuration = 300;
 
 class SnapTikService {
   private readonly baseURL: string = "https://dev.snaptik.app";
